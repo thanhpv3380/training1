@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Test</title>
+
+</head>
+
+<body>
+    <ul id="todolist"></ul>
+    <label>Name: </label>
+    <input type="text" id="name">
+    <input type="text" id="pos">
+    <button onclick="add()" id="add">Add</button>
+    <button onclick="edit()" id="edit">Edit</button>
+    <button onclick="del()" id="delete">Delete</button>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script language="javascript">
+        var items = [];
+        getData();
+        function getData(){
+            console.log('fds');
+            axios.get('http://localhost:3000/employees').then(res => {
+                items = res.data;
+
+                var html = document.getElementById('todolist');
+                var content = items.map((item) => {
+                    return '<li>' + item.name + '</li>';
+                });
+                console.log(content);
+                html.innerHTML = content.join('');
+            });
+        }
+        function add() {
+            var html = document.getElementById('todolist');
+            var name = document.getElementById('name').value;
+            axios.post('http://localhost:3000/employees', {
+                name: name
+            }).then(resp => {
+                console.log(resp.data);
+            }).catch(error => {
+                console.log(error);
+            });
+            html.innerHTML += "<li>" + name + "</li>";
+        }
+        function edit() {
+            var html = document.getElementById('todolist');
+            var name = document.getElementById('name').value;
+            var pos = document.getElementById('pos').value;
+            axios.put('http://localhost:3000/employees/' + pos + '/', {
+                name
+            }).then(resp => {
+                console.log(resp.data);
+                getData();
+            }).catch(error => {
+
+                console.log(error);
+            });
+            
+        }
+        function del() {
+            var html = document.getElementById('todolist');
+            var name = document.getElementById('name').value;
+            var pos = document.getElementById('pos').value;
+            axios.delete('http://localhost:3000/employees/'+pos+'/')
+            .then(resp => {
+                console.log(resp.data);
+                getData();
+            }).catch(error => {
+                console.log(error);
+            });
+            
+        }
+    </script>
+</body>
+
+</html>
